@@ -1,0 +1,83 @@
+[
+  {
+    "username": "kenleyl",
+    "name": "Ken Leyl",
+    "country": "United States",
+    "comment": "Ali Imran is a true talent in mobile and full-stack development — his attention to detail and craft make the product feel top-notch. Quick responsiveness and deep understanding ensured a smooth collaboration. He went above and beyond to capture the vision of the app.",
+    "photo": null,
+    "initial": "K",
+    "color": "#e11d48"
+  },
+  {
+    "username": "tara_frank",
+    "name": "Tara Frank",
+    "country": "United Kingdom",
+    "comment": "Ali was a real pleasure to work with — this is the first time we looked at building an app and he made the whole process painless. We feel very secure in his hands and thoroughly recommend him!",
+    "photo": null,
+    "initial": "T",
+    "color": "#ec4899"
+  },
+  {
+    "username": "donnyhackett247",
+    "name": "Donny Hackett",
+    "country": "United States",
+    "comment": "Great person, completed the project on time and above expectations. Worth every penny spent. WILL hire again for mobile and full-stack work!",
+    "photo": null,
+    "initial": "D",
+    "color": "#f59e0b"
+  },
+  {
+    "username": "davidjmacneil",
+    "name": "David MacNeil",
+    "country": "Costa Rica",
+    "comment": "Ali was great. The work was engaging, communication was responsive, and he did a great job on our project.",
+    "photo": null,
+    "initial": "D",
+    "color": "#3b6cff"
+  },
+  {
+    "username": "bitstar",
+    "name": "Bitstar",
+    "country": "Netherlands",
+    "comment": "Very easy to do business with. Smart, quick, great communication. Helped me think through parts of the project that needed improvement. Very satisfied — I will work with him again!",
+    "photo": null,
+    "initial": "B",
+    "color": "#22c55e"
+  },
+  {
+    "username": "connectme0411",
+    "name": "Chris Connect",
+    "country": "United States",
+    "comment": "Imran's work was exceptional. Attention to detail elevated the outcome. His collaborative approach stood out — receptive to feedback and proactive with solid technical insights.",
+    "photo": null,
+    "initial": "C",
+    "color": "#14b8a6"
+  },
+  {
+    "username": "james_villar",
+    "name": "James Villar",
+    "country": "United States",
+    "comment": "Working with Ali was very easy. I gave him the concept and he delivered a workable app structure and screens, and accommodated every revision request.",
+    "photo": null,
+    "initial": "J",
+    "color": "#f97316"
+  },
+  {
+    "username": "frankspiration2",
+    "name": "Frank S.",
+    "country": "United States",
+    "comment": "Best work I have had done. Top class developer with clear communication and polished delivery. I will keep coming back for mobile app builds.",
+    "photo": null,
+    "initial": "F",
+    "color": "#8b5cf6"
+  },
+  {
+    "username": "egio24",
+    "name": "Egio",
+    "country": "Albania",
+    "comment": "Ali did a great job on my platform. I would recommend collaborating with him to anyone who needs mobile or full-stack development.",
+    "photo": null,
+    "initial": "E",
+    "color": "#06b6d4"
+  }
+]

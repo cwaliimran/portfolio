@@ -2,194 +2,487 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>CW NextGen – Android App Developer | Ali Imran</title>
-
-  <meta name="description"
-        content="Official developer website of Ali Imran (CW NextGen). Publisher of trusted Android apps on Google Play including Islamic, utility, productivity, and lifestyle applications." />
-  <meta name="author" content="Ali Imran - CW NextGen" />
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      line-height: 1.6;
-    }
-    header {
-      background: linear-gradient(135deg, #2563eb, #1e40af);
-      padding: 60px 20px;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 36px;
-    }
-    header p {
-      max-width: 700px;
-      margin: 15px auto 0;
-      font-size: 18px;
-      color: #dbeafe;
-    }
-    section {
-      padding: 50px 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
-    h2 {
-      margin-top: 0;
-      color: #93c5fd;
-    }
-    .apps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-    }
-    .app-card {
-      background: #020617;
-      border-radius: 10px;
-      padding: 20px;
-      border: 1px solid #1e293b;
-    }
-    .app-card h3 {
-      margin-top: 0;
-      color: #e5e7eb;
-    }
-    .app-card a {
-      text-decoration: none;
-      color: #60a5fa;
-      font-weight: bold;
-    }
-    footer {
-      background: #020617;
-      padding: 30px 20px;
-      text-align: center;
-      font-size: 14px;
-      color: #9ca3af;
-    }
-    footer a {
-      color: #93c5fd;
-      text-decoration: none;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ali Imran — Full-Stack Developer</title>
+  <meta name="description" content="Ali Imran — Senior Full-Stack Developer building high-performance mobile and web products." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
+  <div class="cursor-glow" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="breath-world" aria-hidden="true">
+    <canvas class="breath-field" data-breath-field></canvas>
+    <div class="breath-wash"></div>
+  </div>
 
-  <!-- HERO -->
-  <header>
-    <h1>CW NextGen</h1>
-    <p>
-      Android app publisher on Google Play by Ali Imran.
-      Building Islamic, utility, wallpaper, productivity, and lifestyle apps used worldwide.
-    </p>
-  </header>
-
-  <!-- ABOUT -->
-  <section>
-    <h2>About the Developer</h2>
-    <p>
-      My name is <strong>Ali Imran</strong>, founder of <strong>CW NextGen</strong>.
-      I am a full-stack engineer and independent Android developer publishing high-quality,
-      policy-compliant applications on Google Play.
-    </p>
-    <p>
-      My apps focus on Islamic education, useful daily tools, counters, wallpapers,
-      learning and productivity experiences for users across multiple countries.
-    </p>
-  </section>
-
-  <!-- APPS -->
-  <section>
-    <h2>Android Apps on Google Play</h2>
-
-    <div class="apps">
-      <div class="app-card">
-        <h3>99 Names – Allah & Mohammad</h3>
-        <p>Islamic app with meanings, favorites, learning progress and daily name.</p>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.amnames" target="_blank">
-          View on Google Play
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="#top" aria-label="Ali Imran home">
+        <span class="logo-mark" aria-hidden="true">A</span>
+        <span class="logo-text">Ali<span>Imran</span></span>
+      </a>
+      <nav class="nav" id="nav" aria-label="Primary">
+        <a href="#services" data-nav>Services</a>
+        <a href="#skills" data-nav>Skills</a>
+        <a href="#work" data-nav>Work</a>
+        <a href="#testimonials" data-nav>Clients</a>
+        <a class="nav-cta" href="#contact">Let's Talk</a>
+      </nav>
+      <div class="header-actions">
+        <a class="header-social" href="https://github.com/cwaliimran" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .3C5.37.3 0 5.67 0 12.3c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.02-3.34.73-4.04-1.61-4.04-1.61-.55-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.01 2.89-.01 3.29 0 .32.22.7.83.58C20.56 22.1 24 17.6 24 12.3 24 5.67 18.63.3 12 .3z"/></svg>
         </a>
-      </div>
-
-      <div class="app-card">
-        <h3>Quran Wallpaper – Islamic</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.quranislamicwallpaper" target="_blank">
-          View on Google Play
-        </a>
-      </div>
-
-      <div class="app-card">
-        <h3>Coins Symbols</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.coinssymbols" target="_blank">
-          View on Google Play
-        </a>
-      </div>
-
-      <div class="app-card">
-        <h3>Easy Tap Counter</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.easytapcounter" target="_blank">
-          View on Google Play
-        </a>
-      </div>
-
-      <div class="app-card">
-        <h3>Letter Number Chase ABC – 123</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.letternumberchase" target="_blank">
-          View on Google Play
-        </a>
-      </div>
-
-      <div class="app-card">
-        <h3>Cricket CUP's 2023</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.iccwc" target="_blank">
-          View on Google Play
-        </a>
-      </div>
-
-      <div class="app-card">
-        <h3>DSLR Photography Poses</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.dslrphotographyposes" target="_blank">
-          View on Google Play
-        </a>
-      </div>
-
-      <div class="app-card">
-        <h3>NextGen Wallpapers</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.hdwallpapers" target="_blank">
-          View on Google Play
-        </a>
-      </div>
-
-      <div class="app-card">
-        <h3>Pets Care</h3>
-        <a href="https://play.google.com/store/apps/details?id=com.cwnextgen.petscare" target="_blank">
-          View on Google Play
-        </a>
+        <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
       </div>
     </div>
-  </section>
+  </header>
 
-<!-- CONTACT -->
-<section style="background: #1e293b; border-radius: 10px; box-shadow: 0 2px 8px #0003;">
-	<h2>Contact</h2>
-	<p>
-		For support or business inquiries, contact:
-		<br/>
-		<a href="mailto:princelumia143@gmail.com" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 5px; text-decoration: none;">princelumia143@gmail.com</a>
-	</p>
-	<p>
-		LinkedIn:
-		<a href="https://www.linkedin.com/in/cwaliimran/" target="_blank" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 5px; text-decoration: none;">linkedin.com/in/cwaliimran</a>
-	</p>
-</section>
+  <main id="top" class="page-shell">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg" data-parallax>
+        <div class="orb orb-a"></div>
+        <div class="orb orb-b"></div>
+        <div class="orb orb-c"></div>
+        <div class="grid-floor"></div>
+        <div class="hero-beam" aria-hidden="true"></div>
+      </div>
 
-  <!-- FOOTER -->
-  <footer>
-    © 2025 CW NextGen (Ali Imran). All rights reserved.
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="pill reveal">
+            <span class="pill-dot" aria-hidden="true"></span>
+            Available for new projects
+          </p>
+          <h1 class="reveal delay-1">
+            <span class="line">Hello, I'm</span>
+            <span class="name" data-text="Ali Imran">Ali Imran</span>
+          </h1>
+          <p class="role reveal delay-2">
+            <span class="role-static">Full-Stack Developer</span>
+            <span class="role-rotator" aria-live="polite">
+              <span data-roles>React Native Apps · Native Android/iOS · MERN Stack · Product Engineering</span>
+            </span>
+          </p>
+          <p class="lede reveal delay-3">
+            Senior engineer shipping high-performance mobile and web products — from architecture to App Store / Play Store release.
+          </p>
+          <div class="hero-actions reveal delay-4">
+            <a class="btn btn-primary" href="#work"><span>Explore Work</span></a>
+            <a class="btn btn-ghost" href="#contact">
+              <span>Let's Talk</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+          <div class="hero-trust reveal delay-4">
+            <span>Kotlin</span>
+            <span>Swift</span>
+            <span>React Native</span>
+            <span>Node</span>
+            <span>Python</span>
+            <span>Figma</span>
+            <span>Native</span>
+            <span>PHP</span>
+            <span>SQL</span>
+            <span>MongoDB</span>
+            <span>Docker</span>
+            <span>CI/CD</span>
+            <span>DevOps</span>
+            <span>Agile</span>
+            <span>Scrum</span>
+          </div>
+        </div>
+
+        <div class="hero-stage reveal delay-2" data-tilt data-tilt-max="10">
+          <svg class="stage-orbit" viewBox="0 0 420 520" fill="none" aria-hidden="true">
+            <path class="orbit-path" d="M48 90 C140 30, 210 150, 280 110 S390 50, 372 180 S290 300, 250 360 S110 430, 70 490" />
+            <circle class="orbit-node" cx="48" cy="90" r="5" />
+            <circle class="orbit-node n2" cx="372" cy="180" r="4" />
+            <circle class="orbit-node n3" cx="70" cy="490" r="4" />
+          </svg>
+          <div class="stage-ring ring-1"></div>
+          <div class="stage-ring ring-2"></div>
+          <div class="stage-card">
+            <img class="portrait" src="assets/portrait.webp" alt="Ali Imran" width="720" height="1080" />
+            <div class="stage-shine" aria-hidden="true"></div>
+            <div class="stage-scan" aria-hidden="true"></div>
+          </div>
+          <div class="float-chip chip-1" data-depth="0.45"><i></i>10+ Years</div>
+          <div class="float-chip chip-2" data-depth="0.65"><i></i>React · Native</div>
+          <div class="float-chip chip-3" data-depth="0.35"><i></i>500+ Projects</div>
+        </div>
+      </div>
+
+      <div class="stats-rail reveal" id="stats">
+        <div class="stat"><strong><span data-count="10">0</span>+</strong><span>Years Experience</span></div>
+        <div class="stat"><strong><span data-count="500">0</span>+</strong><span>Projects Delivered</span></div>
+        <div class="stat"><strong><span data-count="10">0</span>+</strong><span>Countries Served</span></div>
+      </div>
+
+      <a class="scroll-cue" href="#services" aria-label="Scroll to services">
+        <span>Scroll</span>
+        <i></i>
+      </a>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="services">
+      <div class="section-head reveal">
+        <p class="eyebrow">Excellence In Execution</p>
+        <h2>Digital Solutions Built To<br /><em>Scale With Your Vision.</em></h2>
+        <p class="section-lede">Cutting-edge engineering meets user-centric design — products that redefine standards and drive growth.</p>
+      </div>
+
+      <div class="service-stack">
+        <article class="service-panel tilt-card reveal" data-tilt>
+          <div class="panel-glow"></div>
+          <div class="panel-body">
+            <div class="panel-icon">
+              <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="24" rx="3" stroke="currentColor" stroke-width="2"/><path d="M16 40h16M24 34v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Web App Development</h3>
+            <p>Scalable, high-performance web applications — from robust backends to seamless frontends, end-to-end with precision.</p>
+          </div>
+          <figure class="panel-media contain-frame">
+            <img src="assets/projects/tplus.webp" alt="T-PLUS web product showcase" width="1000" height="881" loading="lazy" />
+          </figure>
+        </article>
+
+        <article class="service-panel tilt-card reverse reveal" data-tilt>
+          <div class="panel-glow"></div>
+          <div class="panel-body">
+            <div class="panel-icon">
+              <svg viewBox="0 0 48 48" fill="none"><rect x="14" y="6" width="20" height="36" rx="4" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="36" r="1.5" fill="currentColor"/></svg>
+            </div>
+            <h3>Mobile App Development</h3>
+            <p>High-quality React Native apps with one codebase for iOS and Android — faster shipping without compromising quality.</p>
+          </div>
+          <figure class="panel-media contain-frame">
+            <img src="assets/projects/taibah.webp" alt="Taibah mobile app showcase" width="1400" height="1243" loading="lazy" />
+          </figure>
+        </article>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="skills" id="skills">
+      <div class="section-head reveal">
+        <h2>Skills</h2>
+        <p class="section-lede">Clients choose us for unwavering excellence, innovative problem-solving, and solutions that surpass expectations.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:0">
+          <div class="skill-face">
+            <img src="assets/skills/java-icon.webp" alt="" width="160" height="160" />
+            <strong>JAVA</strong>
+            <span>97%</span>
+          </div>
+        </div>
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:1">
+          <div class="skill-face">
+            <img src="assets/skills/kotlin-icon.webp" alt="" width="160" height="160" />
+            <strong>Kotlin</strong>
+            <span>93%</span>
+          </div>
+        </div>
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:2">
+          <div class="skill-face">
+            <img src="assets/skills/swift-icon.webp" alt="" width="160" height="160" />
+            <strong>Swift</strong>
+            <span>93%</span>
+          </div>
+        </div>
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:3">
+          <div class="skill-face">
+            <img src="assets/skills/php-icon.webp" alt="" width="160" height="160" />
+            <strong>Php</strong>
+            <span>97%</span>
+          </div>
+        </div>
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:4">
+          <div class="skill-face">
+            <img src="assets/skills/node-icon.webp" alt="" width="160" height="160" />
+            <strong>Node</strong>
+            <span>97%</span>
+          </div>
+        </div>
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:5">
+          <div class="skill-face">
+            <img src="assets/skills/python-icon.webp" alt="" width="160" height="160" />
+            <strong>Python</strong>
+            <span>92%</span>
+          </div>
+        </div>
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:6">
+          <div class="skill-face">
+            <img src="assets/skills/figma-icon.webp" alt="" width="160" height="160" />
+            <strong>Figma</strong>
+            <span>94%</span>
+          </div>
+        </div>
+        <div class="skill-3d reveal" data-tilt data-tilt-max="18" style="--i:7">
+          <div class="skill-face">
+            <div class="native-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="6" fill="#61DAFB"/><ellipse cx="32" cy="32" rx="22" ry="8" stroke="#61DAFB" stroke-width="3"/><ellipse cx="32" cy="32" rx="22" ry="8" stroke="#61DAFB" stroke-width="3" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="22" ry="8" stroke="#61DAFB" stroke-width="3" transform="rotate(120 32 32)"/></svg>
+            </div>
+            <strong>Native</strong>
+            <span>90%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section class="work" id="work">
+      <div class="section-head reveal">
+        <h2>Portfolio</h2>
+        <p class="work-kicker">Check My Wonderful Works</p>
+        <p class="section-lede">Solutions that shift how market leaders operate in their core sectors.</p>
+      </div>
+
+      <div class="work-gallery">
+        <article class="work-card featured tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Fintech</span>
+            <h3>T-PLUS</h3>
+            <p>Mobile wallet experiences built for ownership, trust, and speed.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/tplus.webp" alt="T-PLUS Mobile Wallet" width="1000" height="881" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="work-card tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Health</span>
+            <h3>Be Fit</h3>
+            <p>Community fitness platform for trainers, groups, and motivation.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/befit.webp" alt="Be Fit app" width="1400" height="1234" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="work-card tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Marketplace</span>
+            <h3>Timezzi</h3>
+            <p>Lifestyle services marketplace designed around your time.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/timezzi.webp" alt="Timezzi marketplace" width="1400" height="1234" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="work-card tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Social</span>
+            <h3>Fox Nox</h3>
+            <p>Nightlife and events discovery with community at the core.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/foxnox.webp" alt="Fox Nox" width="1400" height="1234" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="work-card tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Rewards</span>
+            <h3>LuckyAds</h3>
+            <p>Giveaway platform with live campaigns and conversion-first flows.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/luckyads.webp" alt="LuckyAds" width="1400" height="1234" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="work-card tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Support</span>
+            <h3>AngelsBond</h3>
+            <p>Compassionate pregnancy-loss support community and tools.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/angelsbond.webp" alt="AngelsBond" width="1400" height="1234" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="work-card tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Faith · AI</span>
+            <h3>Taibah AI</h3>
+            <p>All-in-one Islamic companion with AI-assisted daily guidance.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/taibah.webp" alt="Taibah AI" width="1400" height="1243" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="work-card featured tilt-card reveal" data-tilt data-tilt-max="8">
+          <div class="work-meta">
+            <span class="tag">Commerce</span>
+            <h3>Vagary</h3>
+            <p>Real-time price comparison and deal alerts, instantly.</p>
+          </div>
+          <div class="shot contain-frame">
+            <img src="assets/projects/vagary.webp" alt="Vagary" width="1400" height="1242" loading="lazy" />
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials" id="testimonials">
+      <div class="section-head centered reveal">
+        <h2>Testimonials</h2>
+        <p class="work-kicker">What Our Clients Say</p>
+        <p class="section-lede">Trusted by founders and teams shipping mobile &amp; full-stack products across the globe.</p>
+      </div>
+
+      <div class="testimonial-showcase">
+        <div class="globe-stage reveal" aria-hidden="true">
+          <canvas data-globe width="560" height="560"></canvas>
+          <div class="globe-glow"></div>
+          <div class="globe-caption">
+            <span>Global delivery network</span>
+            <strong>US · UK · EU · Middle East · LatAm</strong>
+          </div>
+        </div>
+
+        <div class="review-featured reveal delay-2" id="reviewFeatured">
+          <blockquote class="review-lead">
+            <div class="stars" aria-label="5 stars">★★★★★</div>
+            <p class="review-text">Ali Imran is a true talent in mobile and full-stack development — his attention to detail and craft make the product feel top-notch. Quick responsiveness and deep understanding ensured a smooth collaboration. He went above and beyond to capture the vision of the app.</p>
+            <footer class="review-person">
+              <div>
+                <cite class="review-name">Ken Leyl</cite>
+                <span class="review-loc">United States</span>
+              </div>
+            </footer>
+          </blockquote>
+          <div class="review-nav" aria-label="Review navigation">
+            <button type="button" class="review-btn" data-review-prev aria-label="Previous review">‹</button>
+            <div class="review-dots" data-review-dots></div>
+            <button type="button" class="review-btn" data-review-next aria-label="Next review">›</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-grid" data-review-grid></div>
+    </section>
+
+    <!-- CONTACT / LET'S TALK -->
+    <section class="contact" id="contact">
+      <div class="section-head centered reveal">
+        <h2>Let's Talk</h2>
+        <p class="section-lede">Ready to build something that scales? Reach out on the channel that works best for you.</p>
+      </div>
+
+      <div class="contact-links reveal">
+        <a class="contact-link" href="https://www.upwork.com/freelancers/~017b41626f124945fa" target="_blank" rel="noopener noreferrer">
+          <span class="contact-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.37-1.208-1.813-2.121-3.992-2.687-5.81H7.828v7.057c0 1.38-1.123 2.503-2.503 2.503-1.382 0-2.504-1.123-2.504-2.503V3.578H0v7.057c0 3.038 2.47 5.508 5.508 5.508 3.038 0 5.507-2.47 5.507-5.508v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.041.671 2.24 1.08 3.564 1.08 2.91 0 5.271-2.37 5.271-5.28 0-2.91-2.361-5.28-5.271-5.28z"/></svg>
+          </span>
+          <span class="contact-copy">
+            <strong>Upwork</strong>
+            <small>Hire me on Upwork</small>
+          </span>
+        </a>
+
+        <a class="contact-link" href="mailto:cwaliimran@gmail.com">
+          <span class="contact-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          </span>
+          <span class="contact-copy">
+            <strong>Email</strong>
+            <small>cwaliimran@gmail.com</small>
+          </span>
+        </a>
+
+        <a class="contact-link" href="https://wa.me/923005098444" target="_blank" rel="noopener noreferrer">
+          <span class="contact-icon whatsapp" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </span>
+          <span class="contact-copy">
+            <strong>WhatsApp</strong>
+            <small>+92 300 5098 444</small>
+          </span>
+        </a>
+
+        <a class="contact-link" href="tel:+923005098444">
+          <span class="contact-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          <span class="contact-copy">
+            <strong>Call</strong>
+            <small>+92 300 5098 444</small>
+          </span>
+        </a>
+      </div>
+
+      <div class="github-panel reveal">
+        <div class="github-panel-head">
+          <div>
+            <p class="eyebrow">GitHub Activity</p>
+            <h3><a href="https://github.com/cwaliimran" target="_blank" rel="noopener noreferrer">@cwaliimran</a></h3>
+            <p class="github-bio">Full stack applications developer — coding for the future.</p>
+          </div>
+          <a class="btn btn-ghost github-follow" href="https://github.com/cwaliimran" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .3C5.37.3 0 5.67 0 12.3c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.02-3.34.73-4.04-1.61-4.04-1.61-.55-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.01 2.89-.01 3.29 0 .32.22.7.83.58C20.56 22.1 24 17.6 24 12.3 24 5.67 18.63.3 12 .3z"/></svg>
+            View Profile
+          </a>
+        </div>
+
+        <div class="github-stats">
+          <div class="gh-stat">
+            <strong>1,592</strong>
+            <span>Contributions / yr</span>
+          </div>
+          <div class="gh-stat">
+            <strong>49</strong>
+            <span>Public Repos</span>
+          </div>
+          <div class="gh-stat">
+            <strong>8+</strong>
+            <span>Years on GitHub</span>
+          </div>
+          <div class="gh-stat">
+            <strong>4</strong>
+            <span>Followers</span>
+          </div>
+        </div>
+
+        <div class="github-graph">
+          <div class="github-graph-label">
+            <span>Contribution activity</span>
+            <a href="https://github.com/cwaliimran" target="_blank" rel="noopener noreferrer">github.com/cwaliimran</a>
+          </div>
+          <!-- GitHub blocks iframes (X-Frame-Options: deny), so we embed a live SVG heatmap of the same graph -->
+          <div class="github-graph-frame">
+            <img src="assets/github-contrib.svg" alt="GitHub contribution graph for cwaliimran — 1,592 contributions in the last year" width="739" height="95" loading="lazy" />
+          </div>
+          <div class="github-legend" aria-hidden="true">
+            <span>Less</span>
+            <i style="--lv:#121826"></i>
+            <i style="--lv:#163a8a"></i>
+            <i style="--lv:#1f56d4"></i>
+            <i style="--lv:#3b6cff"></i>
+            <i style="--lv:#93b4ff"></i>
+            <span>More</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> Ali Imran · Full-Stack Developer</p>
+    <a href="#top">Back to top ↑</a>
   </footer>
 
+  <script src="main.js"></script>
 </body>
 </html>
