@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Ali Imran">
+  <defs>
+    <linearGradient id="bg" x1="6" y1="2" x2="26" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6b92ff"/>
+      <stop offset="100%" stop-color="#1a3fd4"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#bg)"/>
+  <path fill="#f4f6fb" d="M16.05 7.2c.42 0 .78.26.94.66l6.36 15.4a1 1 0 0 1-1.86.76l-1.52-3.68H11.1l-1.54 3.7a1 1 0 1 1-1.86-.78l6.4-15.4c.16-.4.52-.66.95-.66Zm0 4.12L13.02 18.7h6.06L16.05 11.32Z"/>
+</svg>
