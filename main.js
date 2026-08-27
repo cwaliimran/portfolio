@@ -360,7 +360,11 @@
     requestAnimationFrame(tick);
   };
 
-  initBreath();
+  try {
+    initBreath();
+  } catch (err) {
+    console.warn("Breath atmosphere failed to start", err);
+  }
 
   // 3D wire globe with connecting arcs (client regions)
   const initGlobe = () => {
@@ -535,9 +539,13 @@
     requestAnimationFrame(frame);
   };
 
-  initGlobe();
+  try {
+    initGlobe();
+  } catch (err) {
+    console.warn("Globe failed to start", err);
+  }
 
-  // Testimonials — text-focused, no client photos
+  // Testimonials — show every client in clients.json
   const initReviews = (clients) => {
     const grid = document.querySelector("[data-review-grid]");
     const lead = document.querySelector(".review-lead");
@@ -548,14 +556,14 @@
     const prevBtn = document.querySelector("[data-review-prev]");
     const nextBtn = document.querySelector("[data-review-next]");
 
-    if (grid) {
+    if (grid && clients.length) {
       grid.replaceChildren();
       clients.forEach((c, i) => {
         const card = document.createElement("article");
         card.className = "review-card reveal visible";
         card.style.setProperty("--i", String(i));
         card.innerHTML = `
-          <div class="stars">★★★★★</div>
+          <div class="stars" aria-label="5 stars">★★★★★</div>
           <p></p>
           <footer class="review-person">
             <div>
@@ -613,17 +621,24 @@
     restart();
   };
 
+  const clientsFromGrid = () =>
+    [...document.querySelectorAll("[data-review-grid] .review-card")].map((card) => ({
+      name: card.querySelector("cite")?.textContent?.trim() || "",
+      country: card.querySelector(".review-loc")?.textContent?.trim() || "",
+      comment: card.querySelector("p")?.textContent?.trim() || "",
+    })).filter((c) => c.comment);
+
   fetch("assets/reviewers/clients.json")
-    .then((r) => r.json())
-    .then(initReviews)
+    .then((r) => {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then((clients) => {
+      if (!Array.isArray(clients) || !clients.length) throw new Error("empty");
+      initReviews(clients);
+    })
     .catch(() => {
-      initReviews([
-        {
-          name: "Ken Leyl",
-          country: "United States",
-          comment:
-            "Ali Imran is a true talent in mobile and full-stack development — his attention to detail and craft make the product feel top-notch.",
-        },
-      ]);
+      const fromDom = clientsFromGrid();
+      if (fromDom.length) initReviews(fromDom);
     });
 })();

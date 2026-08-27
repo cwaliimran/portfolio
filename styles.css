@@ -125,6 +125,8 @@ body:hover .cursor-glow { opacity: 1; }
 
 .page-shell,
 .site-footer {
+  position: relative;
+  z-index: 1;
   transform:
     translate3d(0, calc((var(--breath) - 0.5) * -10px), 0)
     scale(calc(0.994 + var(--breath) * 0.012));
@@ -1342,7 +1344,10 @@ h2 em {
 
 .review-dots {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.45rem;
+  max-width: 220px;
 }
 
 .review-dots button {
@@ -1367,6 +1372,7 @@ h2 em {
   display: grid;
   gap: 1.15rem;
   grid-template-columns: 1fr;
+  overflow: visible;
 }
 
 @media (min-width: 700px) {
@@ -1405,6 +1411,7 @@ h2 em {
   font-size: 1.02rem;
   line-height: 1.65;
   flex: 1;
+  overflow: visible;
 }
 
 .review-card.reveal {
