@@ -209,11 +209,11 @@
     });
   }
 
-  // Living breath — physiological inhale/exhale, air field, activity-coupled rate
+  // Living breath — services section only, runs while that section is in view
   const initBreath = () => {
-    const canvas = document.querySelector("[data-breath-field]");
-    const root = document.documentElement;
-    if (!canvas || reduceMotion) {
+    const services = document.querySelector("#services");
+    const canvas = services?.querySelector("[data-breath-field]");
+    if (!services || !canvas || reduceMotion) {
       document.querySelector(".breath-world")?.remove();
       return;
     }
@@ -221,29 +221,44 @@
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    const pointer = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.42 };
+    const restBreath = 0.35;
+    const pointer = { x: 0, y: 0 };
     let energy = 0;
     let lastScroll = window.scrollY;
     let lastTs = performance.now();
     let phase = 0;
-    let lastBreath = 0;
+    let lastBreath = restBreath;
     let dpr = 1;
     let particles = [];
+    let width = 0;
+    let height = 0;
+    let inFocus = false;
+    let running = false;
 
     const count = matchMedia("(max-width: 700px)").matches ? 90 : 160;
 
+    const size = () => {
+      width = Math.max(1, services.offsetWidth);
+      height = Math.max(1, services.offsetHeight);
+    };
+
     const resize = () => {
+      const prevW = width;
+      const prevH = height;
+      size();
+      if (width === prevW && height === prevH && canvas.width) return;
       dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-      canvas.width = Math.floor(window.innerWidth * dpr);
-      canvas.height = Math.floor(window.innerHeight * dpr);
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
     };
 
     const spawn = () => {
+      size();
       particles = Array.from({ length: count }, () => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
+        x: Math.random() * width,
+        y: Math.random() * height,
         z: 0.25 + Math.random() * 1.35,
         a: Math.random() * Math.PI * 2,
         spin: (Math.random() - 0.5) * 0.012,
@@ -265,16 +280,35 @@
       return 0;
     };
 
-    const focus = () => ({
-      x: window.innerWidth * 0.5,
-      y: window.innerHeight * 0.42,
-    });
+    const stop = () => {
+      running = false;
+      services.classList.remove("is-focused");
+      services.style.setProperty("--breath", String(restBreath));
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      lastTs = performance.now();
+      services.classList.add("is-focused");
+      requestAnimationFrame(tick);
+    };
+
+    const setFocus = (focused) => {
+      inFocus = focused;
+      if (focused && !document.hidden) start();
+      else stop();
+    };
 
     window.addEventListener(
       "pointermove",
       (e) => {
-        pointer.x = e.clientX;
-        pointer.y = e.clientY;
+        if (!inFocus) return;
+        const rect = services.getBoundingClientRect();
+        pointer.x = e.clientX - rect.left;
+        pointer.y = e.clientY - rect.top;
         energy = Math.min(1, energy + 0.045);
       },
       { passive: true }
@@ -283,26 +317,30 @@
     window.addEventListener(
       "scroll",
       () => {
+        if (!inFocus) return;
         energy = Math.min(1, energy + Math.min(0.08, Math.abs(window.scrollY - lastScroll) * 0.002));
         lastScroll = window.scrollY;
       },
       { passive: true }
     );
 
-    window.addEventListener("resize", resize, { passive: true });
-    resize();
-    spawn();
+    window.addEventListener(
+      "resize",
+      resize,
+      { passive: true }
+    );
 
-    let running = true;
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(resize).observe(services);
+    }
+
     document.addEventListener("visibilitychange", () => {
-      running = !document.hidden;
-      if (running) {
-        lastTs = performance.now();
-        requestAnimationFrame(tick);
-      }
+      if (document.hidden) stop();
+      else if (inFocus) start();
     });
 
     const tick = (now) => {
+      if (!running) return;
       const dt = Math.min(0.05, (now - lastTs) / 1000);
       lastTs = now;
       energy += (0 - energy) * (1 - Math.exp(-dt * 0.55));
@@ -313,19 +351,17 @@
       const delta = breath - lastBreath;
       lastBreath = breath;
 
-      root.style.setProperty("--breath", breath.toFixed(4));
-      root.style.setProperty("--breath-glow", (0.1 + breath * 0.55).toFixed(4));
+      services.style.setProperty("--breath", breath.toFixed(4));
 
-      const f = focus();
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      const fx = width * 0.5;
+      const fy = height * 0.42;
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
+      ctx.clearRect(0, 0, width, height);
 
       for (const p of particles) {
-        const dx = p.x - f.x;
-        const dy = p.y - f.y;
+        const dx = p.x - fx;
+        const dy = p.y - fy;
         const dist = Math.hypot(dx, dy) + 8;
         const nx = dx / dist;
         const ny = dy / dist;
@@ -343,10 +379,10 @@
           p.y += (pdy / Math.sqrt(pd + 1)) * force;
         }
 
-        if (p.x < -20) p.x = w + 20;
-        if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20;
-        if (p.y > h + 20) p.y = -20;
+        if (p.x < -20) p.x = width + 20;
+        if (p.x > width + 20) p.x = -20;
+        if (p.y < -20) p.y = height + 20;
+        if (p.y > height + 20) p.y = -20;
 
         ctx.beginPath();
         ctx.fillStyle = `hsla(${p.hue}, 75%, 70%, ${0.14 * Math.min(1, p.z)})`;
@@ -357,7 +393,18 @@
       if (running) requestAnimationFrame(tick);
     };
 
-    requestAnimationFrame(tick);
+    resize();
+    spawn();
+    pointer.x = width * 0.5;
+    pointer.y = height * 0.42;
+
+    const focusObserver = new IntersectionObserver(
+      (entries) => {
+        setFocus(Boolean(entries[0]?.isIntersecting));
+      },
+      { root: null, rootMargin: "-22% 0px -38% 0px", threshold: 0 }
+    );
+    focusObserver.observe(services);
   };
 
   try {
