@@ -413,7 +413,7 @@
     console.warn("Breath atmosphere failed to start", err);
   }
 
-  // 3D wire globe with connecting arcs (client regions)
+  // 3D wire globe — wrapping mesh around the full sphere
   const initGlobe = () => {
     const canvas = document.querySelector("[data-globe]");
     if (!canvas) return;
@@ -429,6 +429,7 @@
     const cx = size / 2;
     const cy = size / 2;
     const R = size * 0.38;
+    const tilt = 0.32;
 
     const hubs = [
       { name: "US", lat: 38, lon: -97 },
@@ -439,63 +440,214 @@
       { name: "AL", lat: 41, lon: 20 },
       { name: "CR", lat: 10, lon: -84 },
       { name: "PK", lat: 30, lon: 69 },
+      { name: "IN", lat: 20, lon: 78 },
+      { name: "SG", lat: 1, lon: 104 },
+      { name: "JP", lat: 36, lon: 138 },
+      { name: "AU", lat: -25, lon: 134 },
+      { name: "BR", lat: -14, lon: -51 },
+      { name: "ZA", lat: -29, lon: 24 },
+      { name: "NG", lat: 9, lon: 8 },
+      { name: "CA", lat: 56, lon: -106 },
     ];
 
+    const home = 7;
     const links = [
-      [0, 7], [1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7],
-      [0, 1], [1, 2], [0, 6], [4, 5],
+      [home, 0], [home, 1], [home, 2], [home, 3], [home, 4], [home, 5],
+      [home, 6], [home, 8], [home, 9], [home, 10], [home, 11], [home, 12],
+      [home, 13], [home, 14], [home, 15],
+      [0, 1], [0, 6], [0, 12], [0, 15],
+      [1, 2], [2, 3], [3, 5], [4, 13], [4, 8],
+      [9, 10], [10, 11], [11, 12], [6, 12], [13, 14], [14, 1],
+      [8, 9], [15, 1], [12, 13],
+    ];
+    const wrapLinks = new Set(["0-7", "7-10", "7-11", "0-11", "11-12"]);
+
+    const orbits = [
+      { inc: 0.12, raan: 0, lift: 0.02 },
+      { inc: 0.48, raan: 0.7, lift: 0.045 },
+      { inc: 0.72, raan: 1.9, lift: 0.035 },
+      { inc: 1.05, raan: 2.8, lift: 0.055 },
+      { inc: 0.35, raan: 4.1, lift: 0.028 },
     ];
 
-    let rot = 20;
+    let rot = 0.55;
     let pulse = 0;
+    let running = false;
+    let raf = 0;
 
-    const project = (lat, lon, rotation) => {
-      const latR = (lat * Math.PI) / 180;
-      const lonR = ((lon + rotation) * Math.PI) / 180;
-      const x = R * Math.cos(latR) * Math.sin(lonR);
-      const y = -R * Math.sin(latR);
-      const z = R * Math.cos(latR) * Math.cos(lonR);
-      return { x: cx + x, y: cy + y, z, visible: z > -R * 0.12 };
+    const latLon = (lat, lon) => {
+      const la = (lat * Math.PI) / 180;
+      const lo = (lon * Math.PI) / 180;
+      return {
+        x: Math.cos(la) * Math.sin(lo),
+        y: Math.sin(la),
+        z: Math.cos(la) * Math.cos(lo),
+      };
     };
 
-    const drawArc = (a, b, t) => {
-      if (!a.visible && !b.visible) return;
-      const mx = (a.x + b.x) / 2;
-      const my = (a.y + b.y) / 2 - 36 - Math.abs(a.x - b.x) * 0.08;
+    const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
+    const cross = (a, b) => ({
+      x: a.y * b.z - a.z * b.y,
+      y: a.z * b.x - a.x * b.z,
+      z: a.x * b.y - a.y * b.x,
+    });
+    const mag = (v) => Math.hypot(v.x, v.y, v.z) || 1;
+    const norm = (v) => {
+      const m = mag(v);
+      return { x: v.x / m, y: v.y / m, z: v.z / m };
+    };
+    const scale = (v, s) => ({ x: v.x * s, y: v.y * s, z: v.z * s });
+    const add = (a, b) => ({ x: a.x + b.x, y: a.y + b.y, z: a.z + b.z });
+
+    const spin = (v, yaw) => {
+      const y1 = v.y * Math.cos(tilt) - v.z * Math.sin(tilt);
+      const z1 = v.y * Math.sin(tilt) + v.z * Math.cos(tilt);
+      return {
+        x: v.x * Math.cos(yaw) - z1 * Math.sin(yaw),
+        y: y1,
+        z: v.x * Math.sin(yaw) + z1 * Math.cos(yaw),
+      };
+    };
+
+    const project = (v) => ({
+      x: cx + v.x * R,
+      y: cy - v.y * R,
+      z: v.z,
+      front: v.z >= -0.04,
+    });
+
+    const rotateAxis = (v, axis, ang) => {
+      const c = Math.cos(ang);
+      const s = Math.sin(ang);
+      const d = dot(axis, v);
+      const cr = cross(axis, v);
+      return add(add(scale(v, c), scale(cr, s)), scale(axis, d * (1 - c)));
+    };
+
+    const pathGC = (a, b, steps, longWay) => {
+      let axis = cross(a, b);
+      if (mag(axis) < 1e-4) axis = cross(a, { x: 0, y: 1, z: 0 });
+      let omega = Math.acos(Math.min(1, Math.max(-1, dot(a, b))));
+      if (longWay) {
+        axis = scale(axis, -1);
+        omega = Math.PI * 2 - omega;
+      }
+      axis = norm(axis);
+      const pts = [];
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const loft = Math.sin(t * Math.PI) * (longWay ? 0.07 : 0.045);
+        pts.push(scale(rotateAxis(a, axis, omega * t), 1 + loft));
+      }
+      return pts;
+    };
+
+    const orbitPath = (inc, raan, lift, steps = 160) => {
+      const pts = [];
+      for (let i = 0; i <= steps; i++) {
+        const a = (i / steps) * Math.PI * 2;
+        let v = { x: Math.cos(a), y: 0, z: Math.sin(a) };
+        v = {
+          x: v.x,
+          y: v.y * Math.cos(inc) - v.z * Math.sin(inc),
+          z: v.y * Math.sin(inc) + v.z * Math.cos(inc),
+        };
+        const c = Math.cos(raan);
+        const s = Math.sin(raan);
+        v = { x: v.x * c - v.z * s, y: v.y, z: v.x * s + v.z * c };
+        pts.push(scale(v, 1 + lift));
+      }
+      return pts;
+    };
+
+    const strokePath = (worldPts, yaw, style, pass) => {
+      const front = pass === "front";
       ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.quadraticCurveTo(mx, my, b.x, b.y);
-      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-      grad.addColorStop(0, `rgba(59,108,255,${0.12 + 0.3 * t})`);
-      grad.addColorStop(0.5, `rgba(147,180,255,${0.5 + 0.35 * t})`);
-      grad.addColorStop(1, `rgba(59,108,255,${0.12 + 0.3 * t})`);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 1.4;
+      let started = false;
+      for (const w of worldPts) {
+        const p = project(spin(w, yaw));
+        if (p.front !== front) {
+          started = false;
+          continue;
+        }
+        if (!started) {
+          ctx.moveTo(p.x, p.y);
+          started = true;
+        } else ctx.lineTo(p.x, p.y);
+      }
+      ctx.strokeStyle = style.color;
+      ctx.lineWidth = style.width;
       ctx.stroke();
-
-      const u = (pulse + t * 0.37) % 1;
-      const px = (1 - u) * (1 - u) * a.x + 2 * (1 - u) * u * mx + u * u * b.x;
-      const py = (1 - u) * (1 - u) * a.y + 2 * (1 - u) * u * my + u * u * b.y;
-      ctx.beginPath();
-      ctx.arc(px, py, 2.4, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(200, 220, 255, 0.95)";
-      ctx.fill();
     };
+
+    const along = (worldPts, t, yaw) => {
+      const n = worldPts.length - 1;
+      const f = ((t % 1) + 1) % 1 * n;
+      const i = Math.floor(f);
+      const u = f - i;
+      const a = worldPts[i];
+      const b = worldPts[Math.min(i + 1, n)];
+      return project(spin({
+        x: a.x + (b.x - a.x) * u,
+        y: a.y + (b.y - a.y) * u,
+        z: a.z + (b.z - a.z) * u,
+      }, yaw));
+    };
+
+    const hubVecs = hubs.map((h) => latLon(h.lat, h.lon));
+    const routes = links.map(([i, j]) => {
+      const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+      return pathGC(hubVecs[i], hubVecs[j], wrapLinks.has(key) ? 56 : 36, wrapLinks.has(key));
+    });
+    const belts = orbits.map((o) => orbitPath(o.inc, o.raan, o.lift));
 
     const render = () => {
       ctx.clearRect(0, 0, size, size);
 
-      const glow = ctx.createRadialGradient(cx, cy, R * 0.2, cx, cy, R * 1.25);
-      glow.addColorStop(0, "rgba(59,108,255,0.18)");
-      glow.addColorStop(0.55, "rgba(59,108,255,0.05)");
-      glow.addColorStop(1, "rgba(59,108,255,0)");
-      ctx.fillStyle = glow;
+      const halo = ctx.createRadialGradient(cx, cy, R * 0.15, cx, cy, R * 1.28);
+      halo.addColorStop(0, "rgba(59,108,255,0.2)");
+      halo.addColorStop(0.55, "rgba(59,108,255,0.05)");
+      halo.addColorStop(1, "rgba(59,108,255,0)");
+      ctx.fillStyle = halo;
       ctx.fillRect(0, 0, size, size);
 
-      const sphere = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R);
-      sphere.addColorStop(0, "#1a2f6b");
-      sphere.addColorStop(0.55, "#0d1840");
-      sphere.addColorStop(1, "#070d22");
+      const drawMesh = (pass) => {
+        const back = pass === "back";
+        const a = back ? 0.08 : 0.28;
+        ctx.lineJoin = "round";
+
+        for (let lat = -75; lat <= 75; lat += 15) {
+          const ring = [];
+          for (let lon = -180; lon <= 180; lon += 4) ring.push(latLon(lat, lon));
+          strokePath(ring, rot, { color: `rgba(90,130,220,${a})`, width: lat === 0 ? 1.25 : 0.8 }, pass);
+        }
+        for (let lon = -180; lon < 180; lon += 15) {
+          const mer = [];
+          for (let lat = -90; lat <= 90; lat += 3) mer.push(latLon(lat, lon));
+          strokePath(mer, rot, { color: `rgba(90,130,220,${a * 0.85})`, width: 0.75 }, pass);
+        }
+
+        belts.forEach((belt, i) => {
+          strokePath(belt, rot, {
+            color: back ? `rgba(90,150,255,0.12)` : `rgba(130,175,255,${0.42 + (i % 3) * 0.08})`,
+            width: back ? 1 : 1.45,
+          }, pass);
+        });
+
+        routes.forEach((route, i) => {
+          strokePath(route, rot, {
+            color: back ? "rgba(80,140,255,0.1)" : `rgba(150,185,255,${0.32 + (i % 4) * 0.08})`,
+            width: back ? 0.9 : 1.25,
+          }, pass);
+        });
+      };
+
+      drawMesh("back");
+
+      const sphere = ctx.createRadialGradient(cx - R * 0.32, cy - R * 0.38, R * 0.08, cx, cy, R);
+      sphere.addColorStop(0, "rgba(32, 58, 130, 0.72)");
+      sphere.addColorStop(0.45, "rgba(12, 22, 58, 0.88)");
+      sphere.addColorStop(1, "rgba(5, 10, 28, 0.94)");
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fillStyle = sphere;
@@ -503,71 +655,53 @@
 
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(120, 160, 255, 0.45)";
+      ctx.strokeStyle = "rgba(120, 160, 255, 0.5)";
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      ctx.lineWidth = 1;
-      for (let i = -2; i <= 2; i++) {
-        ctx.beginPath();
-        let started = false;
-        for (let lon = -180; lon <= 180; lon += 3) {
-          const p = project(i * 22, lon, rot);
-          if (p.z <= 0) {
-            started = false;
-            continue;
-          }
-          if (!started) {
-            ctx.moveTo(p.x, p.y);
-            started = true;
-          } else ctx.lineTo(p.x, p.y);
-        }
-        ctx.strokeStyle = "rgba(90, 130, 220, 0.22)";
-        ctx.stroke();
-      }
-      for (let lon = -150; lon <= 150; lon += 30) {
-        ctx.beginPath();
-        let started = false;
-        for (let lat = -80; lat <= 80; lat += 3) {
-          const p = project(lat, lon, rot);
-          if (p.z <= 0) {
-            started = false;
-            continue;
-          }
-          if (!started) {
-            ctx.moveTo(p.x, p.y);
-            started = true;
-          } else ctx.lineTo(p.x, p.y);
-        }
-        ctx.strokeStyle = "rgba(90, 130, 220, 0.18)";
-        ctx.stroke();
-      }
+      drawMesh("front");
 
-      const pts = hubs.map((h) => ({ ...h, ...project(h.lat, h.lon, rot) }));
-
-      links.forEach((pair, i) => {
-        const a = pts[pair[0]];
-        const b = pts[pair[1]];
-        if (a.z > -20 || b.z > -20) drawArc(a, b, (i % 5) / 5);
+      hubs.forEach((h, hi) => {
+        const p = project(spin(latLon(h.lat, h.lon), rot));
+        const depth = (p.z + 1) * 0.5;
+        const home = hi === 7;
+        const alpha = p.front ? 0.4 + 0.6 * depth : 0.12;
+        const r = (p.front ? 3.4 + depth * 1.5 : 2.1) * (home ? 1.35 : 1);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = home
+          ? `rgba(190, 215, 255, ${alpha})`
+          : `rgba(170, 200, 255, ${alpha})`;
+        ctx.fill();
+        if (p.front) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r + (home ? 7 : 5), 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(59, 108, 255, ${0.28 * depth})`;
+          ctx.lineWidth = home ? 1.8 : 1.4;
+          ctx.stroke();
+        }
       });
 
-      pts.forEach((p) => {
-        if (!p.visible) return;
-        const alpha = 0.35 + 0.65 * Math.max(0, p.z / R);
+      const packets = [
+        ...belts.map((belt, i) => ({ path: belt, t: pulse * (0.35 + (i % 3) * 0.12) + i * 0.17, r: 2.3 })),
+        ...routes.map((route, i) => ({ path: route, t: pulse * 0.55 + i * 0.09, r: 2.1 })),
+      ];
+      packets.forEach(({ path, t, r }) => {
+        const p = along(path, t, rot);
+        if (!p.front) return;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 4.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(147, 180, 255, ${alpha})`;
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(220, 235, 255, 0.95)";
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(59, 108, 255, ${0.25 * alpha})`;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
+        ctx.arc(p.x, p.y, r + 4, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(90, 140, 255, 0.18)";
+        ctx.fill();
       });
 
       ctx.beginPath();
-      ctx.arc(cx, cy, R, -1.2, 0.4);
-      ctx.strokeStyle = "rgba(180, 205, 255, 0.35)";
+      ctx.arc(cx, cy, R, -1.25, 0.35);
+      ctx.strokeStyle = "rgba(190, 215, 255, 0.38)";
       ctx.lineWidth = 2;
       ctx.stroke();
     };
@@ -577,13 +711,34 @@
       return;
     }
 
-    const frame = () => {
-      rot = (rot + 0.18) % 360;
-      pulse = (pulse + 0.006) % 1;
+    const tick = () => {
+      if (!running) return;
+      rot = (rot + 0.0048) % (Math.PI * 2);
+      pulse = (pulse + 0.0045) % 1;
       render();
-      requestAnimationFrame(frame);
+      raf = requestAnimationFrame(tick);
     };
-    requestAnimationFrame(frame);
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      raf = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    const stage = canvas.closest(".globe-stage") || canvas;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) start();
+        else stop();
+      },
+      { threshold: 0.12 }
+    );
+    io.observe(stage);
+    render();
   };
 
   try {
